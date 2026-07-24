@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -uo pipefail
+set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RESULTS="$ROOT/telephone-results"
@@ -35,7 +35,8 @@ common_args=(
 set +e
 (
   cd "$RESULTS/director-sandbox"
-  copilot -p "$(cat "$RESULTS/01-director-input.md")" \
+  timeout --signal=TERM --kill-after=30s 10m \
+    copilot -p "$(cat "$RESULTS/01-director-input.md")" \
     "${common_args[@]}" \
     --silent \
     --share "$RESULTS/transcripts/01-director-session.md"
@@ -57,10 +58,11 @@ fi
 set +e
 (
   cd "$ROOT"
-  copilot -p "$(cat "$RESULTS/03-builder-input.md")" \
+  timeout --signal=TERM --kill-after=30s 25m \
+    copilot -p "$(cat "$RESULTS/03-builder-input.md")" \
     "${common_args[@]}" \
     --autopilot \
-    --max-autopilot-continues 8 \
+    --max-autopilot-continues 5 \
     --deny-tool='shell(git push)' \
     --deny-tool='shell(gh:*)' \
     --deny-tool='shell(curl)' \

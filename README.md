@@ -18,6 +18,10 @@ you explicitly select **publish_changes**. Published work goes to
 `telephone-round/<run-id>` in this repository; nothing opens a pull request or
 deploys elsewhere.
 
+Runaway work is bounded: the director has 10 minutes, the builder has 25
+minutes and at most five automatic continuations, and the entire job has a
+45-minute timeout.
+
 ### Setup
 
 Create a fine-grained personal access token with only the **Copilot Requests**
