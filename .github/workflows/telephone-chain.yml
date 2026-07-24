@@ -1,0 +1,61 @@
+name: Telephone Chain
+
+on:
+  # Manually trigger from the GitHub UI or the GitHub API.
+  # Claude.ai and Copilot can call this via the GitHub REST API:
+  #   POST /repos/{owner}/{repo}/actions/workflows/telephone-chain.yml/dispatches
+  workflow_dispatch:
+    inputs:
+      message:
+        description: "Initial message to pass through the model chain"
+        required: true
+        default: "The sky is blue"
+      mock:
+        description: "Use mock responses (no API keys required)"
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  run-chain:
+    name: Run Telephone Chain
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed only if saving results back to the repo
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run telephone chain
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          if [ "${{ inputs.mock }}" = "true" ]; then
+            node telephone_chain.js --message "${{ inputs.message }}" --mock
+          else
+            node telephone_chain.js --message "${{ inputs.message }}"
+          fi
+
+      - name: Upload chain results as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chain-results
+          path: results/
+          retention-days: 90
+
+      - name: Commit results back to repo
+        # Only runs on real (non-mock) runs so test runs do not clutter history.
+        if: ${{ inputs.mock == false }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add results/
+          git diff --cached --quiet || git commit -m "chore: add chain results from workflow run ${{ github.run_id }}"
+          git push

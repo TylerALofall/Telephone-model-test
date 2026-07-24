@@ -1,0 +1,26 @@
+{
+  "description": "Telephone chain configuration. Models are called in order. Each model receives the original message plus every previous model's response so the full conversation history is always visible.",
+  "chain": [
+    {
+      "id": "model-1",
+      "label": "Claude 3.5 Haiku",
+      "provider": "anthropic",
+      "model": "claude-3-5-haiku-20241022",
+      "api_key_env": "ANTHROPIC_API_KEY"
+    },
+    {
+      "id": "model-2",
+      "label": "GPT-4o Mini",
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "api_key_env": "OPENAI_API_KEY"
+    },
+    {
+      "id": "model-3",
+      "label": "Claude 3.5 Sonnet",
+      "provider": "anthropic",
+      "model": "claude-3-5-sonnet-20241022",
+      "api_key_env": "ANTHROPIC_API_KEY"
+    }
+  ]
+}
