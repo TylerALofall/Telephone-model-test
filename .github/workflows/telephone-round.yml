@@ -1,0 +1,87 @@
+name: Opus telephone round
+
+on:
+  workflow_dispatch:
+    inputs:
+      request:
+        description: What should the director ask the builder to create?
+        required: true
+        type: string
+      publish_changes:
+        description: Push the builder changes to a telephone-round branch
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: telephone-round-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  telephone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      COPILOT_MODEL: claude-opus-4.8
+
+    steps:
+      - name: Check out this repository
+        uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Install pinned Copilot CLI
+        run: npm install --global @github/copilot@1.0.74
+
+      - name: Run transparent telephone round
+        id: round
+        continue-on-error: true
+        env:
+          TELEPHONE_REQUEST: ${{ inputs.request }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+        run: bash scripts/run-telephone-round.sh
+
+      - name: Add run details to the Actions summary
+        if: always()
+        run: |
+          if [[ -f telephone-results/round-summary.md ]]; then
+            cat telephone-results/round-summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "The round stopped before it could create a summary." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload complete round record
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: telephone-round-${{ github.run_id }}
+          path: telephone-results/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Publish changes to a run branch
+        if: inputs.publish_changes && steps.round.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --cached --quiet; then
+            echo "The builder made no repository changes."
+            exit 0
+          fi
+
+          branch="telephone-round/${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Telephone round ${GITHUB_RUN_ID}"
+          auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" \
+            push origin "HEAD:refs/heads/$branch"
+          echo "Published to \`$branch\`." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail when the model round failed
+        if: steps.round.outcome != 'success'
+        run: exit 1
+
