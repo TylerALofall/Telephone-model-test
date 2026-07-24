@@ -37,7 +37,7 @@ Every run uploads a `telephone-round-<run-id>` artifact containing:
 - Copilot's shared Markdown session transcripts;
 - stderr and exit codes from both sessions;
 - Git status, a change summary, and a binary-capable patch; and
-- a list of SVG files present after the build.
+- a list and browsable copies of SVG files present after the build.
 
 Artifacts are retained for 30 days. They can contain the complete prompt,
 model responses, commands, and generated output, so review them before sharing

@@ -72,7 +72,8 @@ builder_status=$?
 set -e
 printf '%s\n' "$builder_status" > "$RESULTS/04-builder-exit-code.txt"
 
-git -C "$ROOT" add -A -- . ':(exclude)telephone-results'
+git -C "$ROOT" add -A -- .
+git -C "$ROOT" reset --quiet -- telephone-results
 git -C "$ROOT" status --short > "$RESULTS/05-git-status.txt"
 git -C "$ROOT" diff --cached --stat > "$RESULTS/06-change-stat.txt"
 git -C "$ROOT" diff --cached --binary > "$RESULTS/07-changes.patch"
@@ -80,6 +81,13 @@ git -C "$ROOT" diff --cached --binary > "$RESULTS/07-changes.patch"
 find "$ROOT" -type f -name '*.svg' \
   -not -path "$RESULTS/*" \
   -print | sort > "$RESULTS/08-svg-files.txt"
+mkdir -p "$RESULTS/rendered-svg"
+(
+  cd "$ROOT"
+  find . -type f -name '*.svg' \
+    -not -path './telephone-results/*' \
+    -print0 | xargs -0 -r cp --parents -t "$RESULTS/rendered-svg"
+)
 
 cat > "$RESULTS/round-summary.md" <<EOF
 # Telephone round
@@ -95,4 +103,3 @@ resulting repository patch.
 EOF
 
 exit "$builder_status"
-
