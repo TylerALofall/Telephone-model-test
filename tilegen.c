@@ -12,7 +12,9 @@
 #define CANVAS 512
 #define GLYPH_ORIGIN 96
 #define CELL 40
-#define EXPECTED_FILE_COUNT 59
+#define GLYPH_ROWS 8
+#define GLYPH_COLS 8
+#define MAX_PATH_LEN 512
 #define PI 3.14159265358979323846
 
 typedef struct {
@@ -80,6 +82,12 @@ static const Glyph LOWERCASE_GLYPHS[] = {
 
 static int created_files = 0;
 
+static int expected_file_count(void) {
+    int uppercase_count = (int)(sizeof(UPPERCASE_GLYPHS) / sizeof(UPPERCASE_GLYPHS[0]));
+    int lowercase_count = (int)(sizeof(LOWERCASE_GLYPHS) / sizeof(LOWERCASE_GLYPHS[0]));
+    return 1 + uppercase_count + lowercase_count + 1 + 1 + 4;
+}
+
 static bool ensure_dir(const char *path) {
     if (mkdir(path, 0755) == 0) {
         return true;
@@ -128,8 +136,8 @@ static bool write_letter(const char *path, const Glyph *glyph) {
     }
     write_bg(fp);
 
-    for (int r = 0; r < 8; ++r) {
-        for (int c = 0; c < 8; ++c) {
+    for (int r = 0; r < GLYPH_ROWS; ++r) {
+        for (int c = 0; c < GLYPH_COLS; ++c) {
             if (glyph->rows[r][c] == '#') {
                 int x = GLYPH_ORIGIN + c * CELL;
                 int y = GLYPH_ORIGIN + r * CELL;
@@ -217,7 +225,7 @@ static bool write_square_shape(const char *path) {
 
 int main(void) {
     const char *base = "out/03_colors/orange";
-    char path[512];
+    char path[MAX_PATH_LEN];
 
     if (!ensure_dir("out") || !ensure_dir("out/03_colors") || !ensure_dir(base)) {
         return 1;
@@ -273,8 +281,9 @@ int main(void) {
     }
 
     printf("FILE COUNT: %d\n", created_files);
-    if (created_files != EXPECTED_FILE_COUNT) {
-        fprintf(stderr, "ERROR: expected %d files, got %d\n", EXPECTED_FILE_COUNT, created_files);
+    int expected = expected_file_count();
+    if (created_files != expected) {
+        fprintf(stderr, "ERROR: expected %d files, got %d\n", expected, created_files);
         return 1;
     }
 
