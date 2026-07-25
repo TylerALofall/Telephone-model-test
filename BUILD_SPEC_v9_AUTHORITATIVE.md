@@ -11,7 +11,7 @@ Colour is a runtime argument, not a source edit. Invoke:
 
     ./tilegen <colour-word> <hex>
 
-Run it once per colour listed in section 12. The same binary produces every
+Run it once per colour listed in section 11. The same binary produces every
 colour set, so the sets cannot drift apart.
 
 ## 1. GOAL
@@ -72,12 +72,12 @@ Hex <hex> fills coloured elements. Non-colour backgrounds are white #FFFFFF.
     <svg viewBox="0 0 512 512"><rect width="512" height="512" fill="<hex>"/></svg>
 
 ### 6.2 LETTERS (ABC for A-Z, abc for a-z) — 52 files
-Item is the literal character. Reproduce the EXACT bitmap from section 11. Do
+Item is the literal character. Reproduce the EXACT bitmap from section 12. Do
 not design letterforms. Match cell for cell even if rough: the same glyph feeds
 the written letter, the sound link, and later drawing, so recognition depends
 on an exact match.
 
-Reading section 11 (unambiguous):
+Reading section 12 (unambiguous):
   - Each line is one glyph: the character, a TAB, then exactly 64 characters
     of 1 or 0.
   - The 64 characters are the 8x8 grid row-major: first 8 = row 0 (cols 0..7),
