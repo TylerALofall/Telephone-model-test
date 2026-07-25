@@ -186,7 +186,7 @@ static bool write_seven_balls(const char *path) {
     fprintf(fp, "<circle cx=\"256\" cy=\"256\" r=\"60\" fill=\"%s\"/>\n", COLOR);
 
     for (int deg = 0; deg < 360; deg += 60) {
-        double rad = (double)deg * PI / 180.0;
+        double rad = ((double)deg * PI) / 180.0;
         long x = lround(256.0 + 150.0 * cos(rad));
         long y = lround(256.0 + 150.0 * sin(rad));
         fprintf(fp, "<circle cx=\"%ld\" cy=\"%ld\" r=\"60\" fill=\"%s\"/>\n", x, y, COLOR);
@@ -207,7 +207,7 @@ static bool write_polygon_shape(const char *path, int sides, int start_angle_deg
     fputs("<polygon points=\"", fp);
     for (int i = 0; i < sides; ++i) {
         int deg = start_angle_deg + i * (360 / sides);
-        double rad = (double)deg * PI / 180.0;
+        double rad = ((double)deg * PI) / 180.0;
         long x = lround(256.0 + 180.0 * cos(rad));
         long y = lround(256.0 + 180.0 * sin(rad));
         fprintf(fp, "%ld,%ld", x, y);
