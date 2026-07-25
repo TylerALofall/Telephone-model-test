@@ -59,10 +59,10 @@ letters `L1 L2 L3 ...`:
 
 | Kind | Filename | Content |
 |---|---|---|
-| Swatch | `Word.svg` (lowercased, e.g. `red.svg`) | solid field of `#HEX` |
-| Dot | `red_dot.svg` | white field, one filled circle of `#HEX` |
-| Name | `red_name_text.svg` | the whole word spelled in glyphs, ink `#HEX` |
-| Letter | `red_letter_R.svg`, `red_letter_e.svg`, `red_letter_d.svg` | one file per letter of the word, in order, each glyph ink `#HEX` |
+| Swatch | `[colour].svg` (e.g. `red.svg`) | solid field of `#HEX` |
+| Dot | `[colour]_dot.svg` (e.g. `red_dot.svg`) | white field, one filled circle of `#HEX` |
+| Name | `[colour]_name_text.svg` (e.g. `red_name_text.svg`) | the whole word spelled in glyphs, ink `#HEX` |
+| Letter | `[colour]_letter_<glyph>.svg` (e.g. `red_letter_R.svg`, `red_letter_e.svg`, `red_letter_d.svg`) | one file per letter of the word, in order, each glyph ink `#HEX` |
 
 The word is spelled with its **real spelling and real capitalization**: first
 letter uppercase, rest lowercase. `Red` is `R`, `e`, `d` — three letter files.

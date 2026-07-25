@@ -17,6 +17,12 @@ in any file may reference, link to, or depend on anything outside that file.
 Every file uses this root and only this root:
     <svg viewBox="0 0 512 512">
 There is NO xmlns attribute. There is NO width or height attribute.
+Note: omitting xmlns="http://www.w3.org/2000/svg" means these files are not
+self-contained SVG documents per the XML/SVG spec and may not render in strict
+XML parsers or be processed by tools that require a namespace declaration.
+This is an intentional tradeoff to satisfy the "no external references" and
+minimal-file requirements for Shakti tile storage. Files work correctly in all
+major browsers and lenient SVG renderers.
 
 The following are forbidden in every file. A file containing any of these is
 wrong and must be rebuilt:

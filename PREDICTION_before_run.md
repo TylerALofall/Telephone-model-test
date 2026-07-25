@@ -1,12 +1,12 @@
 # SEALED PREDICTION — before the model runs
-Committed before Copilot receives BUILD_REQUEST_COLOUR_STONES.md.
+Committed before Copilot receives BUILD_REQUEST.md.
 Author: Claude (Opus 4.8). Purpose: grade my own prompt by what the model builds.
 
 ## What I predict the model will get WRONG from my prompt
 
 1. NAME-FILE X-OFFSET. My prompt states "glyph 1 uses x-base 80, glyph 2 uses
    152" but the worked example only shows a SINGLE glyph. I never wrote out a
-   multi-glyph name file in full. Prediction: the model mis-places glyphs in
+   multi-glyph name file in full. Prediction: the model misplaces glyphs in
    the _name_text files - either wrong advance, or forgets the +72 accumulates.
    This is the weakest part of my prompt.
 
