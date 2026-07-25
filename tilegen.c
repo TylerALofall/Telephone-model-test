@@ -17,8 +17,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <limits.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -41,9 +46,13 @@ static int file_count = 0;
 /* -------- directory helpers -------- */
 static void mkdir_p(const char *path)
 {
-    char tmp[512];
+    char tmp[PATH_MAX];
     char *p;
-    snprintf(tmp, sizeof(tmp), "%s", path);
+    int n = snprintf(tmp, sizeof(tmp), "%s", path);
+    if (n < 0 || (size_t)n >= sizeof(tmp)) {
+        fprintf(stderr, "ERROR: path too long: %s\n", path);
+        exit(1);
+    }
     for (p = tmp + 1; *p; p++) {
         if (*p == '/') {
             *p = '\0';
@@ -57,8 +66,12 @@ static void mkdir_p(const char *path)
 /* -------- file open/close -------- */
 static FILE *open_tile(const char *leaf)
 {
-    char path[512];
-    snprintf(path, sizeof(path), "%s/%s_%s.svg", OUT_DIR, PREFIX, leaf);
+    char path[PATH_MAX];
+    int n = snprintf(path, sizeof(path), "%s/%s_%s.svg", OUT_DIR, PREFIX, leaf);
+    if (n < 0 || (size_t)n >= sizeof(path)) {
+        fprintf(stderr, "ERROR: path too long for leaf: %s\n", leaf);
+        exit(1);
+    }
     FILE *f = fopen(path, "w");
     if (!f) { perror(path); exit(1); }
     fprintf(f, "%s\n", SVG_HDR);
@@ -152,7 +165,11 @@ static void write_letter(const char *group, const char *ch,
                          const unsigned char bits[8])
 {
     char leaf[64];
-    snprintf(leaf, sizeof(leaf), "%s_%s", group, ch);
+    int n = snprintf(leaf, sizeof(leaf), "%s_%s", group, ch);
+    if (n < 0 || (size_t)n >= sizeof(leaf)) {
+        fprintf(stderr, "ERROR: leaf name too long: %s_%s\n", group, ch);
+        exit(1);
+    }
     FILE *f = open_tile(leaf);
     fprintf(f, "<rect width=\"512\" height=\"512\" fill=\"%s\"/>\n", WHITE);
     for (int r = 0; r < GROWS; r++) {
@@ -171,7 +188,7 @@ static void write_letter(const char *group, const char *ch,
 
 static void write_letters(void)
 {
-    char ch[4];
+    char ch[2];
     for (int i = 0; i < 26; i++) {
         ch[0] = (char)('A' + i); ch[1] = '\0';
         write_letter("ABC", ch, UPPER[i]);
