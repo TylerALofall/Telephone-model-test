@@ -25,20 +25,26 @@ Each SVG contains ONLY shape primitives and their literal attributes. Nothing
 in any file may reference, link to, or depend on anything outside that file.
 
 Every file uses this root and only this root:
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-Keep the xmlns exactly as shown. Add NO width or height attribute: a pixel
-width forces a fixed render size and breaks uniform scaling in a grid.
+    <svg viewBox="0 0 512 512">
+There is NO xmlns attribute and NO width or height attribute. A pixel width
+forces a fixed render size and breaks uniform scaling in a grid.
+
+TRADEOFF, DECIDED AND INTENTIONAL: omitting xmlns makes these files
+non-conformant as standalone SVG documents under strict XML/SVG parsers. Most
+renderers are lenient; some are not, and a browser opening one directly may
+refuse it. That cost is accepted. These are internal training artifacts parsed
+as geometry, not web assets. No external URI belongs inside them, including a
+namespace identifier. Do not add xmlns back to improve interoperability.
 
 The following are forbidden in every file. A file containing any of these is
 wrong and must be rebuilt:
-    xmlns:xlink, xlink:href, href
+    xmlns, xmlns:xlink, xlink:href, href
     <a>, <use>, <image>, <script>, <style>, <metadata>, <title>, <desc>
     external CSS, @import, url( ... ), data: URIs
     XML comments, processing instructions, DOCTYPE, <?xml ?> declaration
 
 Allowed elements: only <svg>, <rect>, <circle>, <polygon>.
-Allowed attributes: only xmlns (on root), viewBox, x, y, width, height,
-cx, cy, r, points, fill.
+Allowed attributes: only viewBox, x, y, width, height, cx, cy, r, points, fill.
 Nothing else appears in any file.
 
 ## 3. CANVAS
@@ -112,7 +118,7 @@ out/03_colors/<colour>/, one zip of out/, and a short README stating how to
 invoke tilegen and the per-colour and total file counts.
 
 ## 9. SELF-CHECK (must all pass)
-  - grep every SVG for: href, <a, <use, <image, <script, <style,
+  - grep every SVG for: xmlns, href, <a, <use, <image, <script, <style,
     <metadata, <title, <desc, url(, data:, <!--, <?xml, <!DOCTYPE
     Every one must return ZERO matches across all 59 files.
   - Confirm character A and lowercase a match section 12 cell for cell.
@@ -123,7 +129,7 @@ invoke tilegen and the per-colour and total file counts.
     FILE COUNT PER COLOUR: <n>  (must be 59)
     TOTAL FILES: <n>            (must be 472)
     FORBIDDEN-TOKEN SCAN: matches found = <n>  (must be 0)
-    ROOT IS EXACTLY <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">: yes/no
+    ROOT IS EXACTLY <svg viewBox="0 0 512 512">: yes/no
     BITMAP MATCH A and a vs section 12: yes/no
     FILES: <name> <bytes>, one line each
     BUNDLE: <zip path> <bytes>
