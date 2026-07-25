@@ -112,15 +112,24 @@ static void svg_footer(FILE *f) {
     fprintf(f, "</svg>\n");
 }
 
-/* Open a file in outdir, abort on error. */
+/* Open a file in outdir, abort on error.
+ * Uses dynamic allocation so that any outdir length is safe. */
 static FILE *open_svg(const char *outdir, const char *name) {
-    char path[512];
-    snprintf(path, sizeof(path), "%s/%s", outdir, name);
+    /* outdir + '/' + name + '\0' */
+    size_t len = strlen(outdir) + 1 + strlen(name) + 1;
+    char *path = (char *)malloc(len);
+    if (!path) {
+        fprintf(stderr, "out of memory\n");
+        exit(EXIT_FAILURE);
+    }
+    snprintf(path, len, "%s/%s", outdir, name);
     FILE *f = fopen(path, "w");
     if (!f) {
         perror(path);
+        free(path);
         exit(EXIT_FAILURE);
     }
+    free(path);
     return f;
 }
 
@@ -250,7 +259,19 @@ int main(int argc, char *argv[]) {
     const char *outdir = (argc > 1) ? argv[1] : "03_colors_blue";
 
     /* Create output directory (no-op if it already exists) */
-    mkdir(outdir, 0755);
+    if (mkdir(outdir, 0755) != 0) {
+        /* EEXIST is fine — directory already present */
+        perror(outdir);
+        /* Only treat it as fatal if the directory truly cannot be used */
+        {
+            struct stat st;
+            if (stat(outdir, &st) != 0 || !S_ISDIR(st.st_mode)) {
+                fprintf(stderr, "error: '%s' is not a usable directory\n",
+                        outdir);
+                return EXIT_FAILURE;
+            }
+        }
+    }
 
     /* 1. Solid screen */
     write_solid_screen(outdir);
