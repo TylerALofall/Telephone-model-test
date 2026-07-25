@@ -316,7 +316,7 @@ int main(int argc, char *argv[])
     if (argc != 3) {
         fprintf(stderr,
                 "Usage: tilegen <colour-word> <hex>\n"
-                "colour-word: red orange yellow green blue violet brown black\n"
+                "colour-word: red | orange | yellow | green | blue | violet | brown | black\n"
                 "hex: #RRGGBB\n");
         return EXIT_FAILURE;
     }
@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
     if (!is_valid_colour_word(word)) {
         fprintf(stderr,
                 "Unknown colour '%s'.\n"
-                "Valid: red orange yellow green blue violet brown black\n",
+                "Valid: red | orange | yellow | green | blue | violet | brown | black\n",
                 word);
         return EXIT_FAILURE;
     }
