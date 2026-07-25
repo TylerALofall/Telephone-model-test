@@ -25,7 +25,7 @@ Each SVG contains ONLY shape primitives and their literal attributes. Nothing
 in any file may reference, link to, or depend on anything outside that file.
 
 Every file uses this root and only this root:
-    <svg viewBox="0 0 512 512">
+    <svg viewBox="0 0 8 8">
 There is NO xmlns attribute and NO width or height attribute. A pixel width
 forces a fixed render size and breaks uniform scaling in a grid.
 
@@ -48,8 +48,13 @@ Allowed attributes: only viewBox, x, y, width, height, cx, cy, r, points, fill.
 Nothing else appears in any file.
 
 ## 3. CANVAS
-viewBox 0 0 512 512 for every file. All tiles identical in size, scaling to
+viewBox 0 0 8 8 for every file. All tiles identical in size, scaling to
 whatever grid cell holds them.
+
+The canvas is 8 units because the bitmap is 8x8. One unit is one grid cell, so
+a coordinate IS a grid position: x="3" y="2" is column 3, row 2. No offset and
+no scale factor sits between the file and the grid, so nothing can drift.
+SVG is vector: an 8-unit tile renders sharp at any display size.
 
 ## 4. OUTPUT AND NAMING
 All files in:  out/03_colors/<colour>/
@@ -69,7 +74,7 @@ Hex <hex> fills coloured elements. Non-colour backgrounds are white #FFFFFF.
 ## 6. THE TILES
 
 ### 6.1 SOLID SCREEN (solid, screen) — 1 file
-    <svg viewBox="0 0 512 512"><rect width="512" height="512" fill="<hex>"/></svg>
+    <svg viewBox="0 0 8 8"><rect width="8" height="8" fill="<hex>"/></svg>
 
 ### 6.2 LETTERS (ABC for A-Z, abc for a-z) — 52 files
 Item is the literal character. Reproduce the EXACT bitmap from section 12. Do
@@ -84,30 +89,32 @@ Reading section 12 (unambiguous):
     next 8 = row 1, and so on for 8 rows. 1 = lit (emit a rect), 0 = empty.
 
 Render geometry (fixed):
-  - Cell 40 by 40. Block 320. Origin (512-320)/2 = 96 for x and y.
+  - Cell 1 by 1. Eight cells span the 8-unit canvas exactly.
   - Lit cell at row r, column c:
-        x = 96 + c*40 , y = 96 + r*40 , width 40 , height 40 , fill <hex>
+        x = c , y = r , width 1 , height 1 , fill <hex>
+    The coordinate is the grid position. No origin offset, no multiplier.
   - White full-canvas background first, then lit cells row-major.
 
 Required result shape (character A, first two lit cells):
-    <svg viewBox="0 0 512 512"><rect width="512" height="512" fill="#FFFFFF"/><rect x="216" y="96" width="40" height="40" fill="<hex>"/><rect x="256" y="96" width="40" height="40" fill="<hex>"/> ...rest of A... </svg>
+    <svg viewBox="0 0 8 8"><rect width="8" height="8" fill="#FFFFFF"/><rect x="2" y="0" width="1" height="1" fill="<hex>"/><rect x="3" y="0" width="1" height="1" fill="<hex>"/> ...rest of A... </svg>
 
 ### 6.3 BALL (ball, one) — 1 file
-    <svg viewBox="0 0 512 512"><rect width="512" height="512" fill="#FFFFFF"/><circle cx="256" cy="256" r="180" fill="<hex>"/></svg>
+    <svg viewBox="0 0 8 8"><rect width="8" height="8" fill="#FFFFFF"/><circle cx="4" cy="4" r="2.8" fill="<hex>"/></svg>
 
 ### 6.4 SEVEN BALLS (balls, seven) — 1 file
-Circles r=60: center (256,256), six at radius 150 at angles 0,60,120,180,240,300,
-x=256+150cos, y=256+150sin, rounded.
-    <svg viewBox="0 0 512 512"><rect width="512" height="512" fill="#FFFFFF"/><circle cx="256" cy="256" r="60" fill="<hex>"/><circle cx="406" cy="256" r="60" fill="<hex>"/><circle cx="331" cy="386" r="60" fill="<hex>"/><circle cx="181" cy="386" r="60" fill="<hex>"/><circle cx="106" cy="256" r="60" fill="<hex>"/><circle cx="181" cy="126" r="60" fill="<hex>"/><circle cx="331" cy="126" r="60" fill="<hex>"/></svg>
+Circles r=0.94: centre (4,4), six at ring radius 2.34 from centre at angles
+0,60,120,180,240,300, x=4+2.34cos, y=4+2.34sin, rounded to 2 decimals.
+    <svg viewBox="0 0 8 8"><rect width="8" height="8" fill="#FFFFFF"/><circle cx="4" cy="4" r="0.94" fill="<hex>"/><circle cx="6.34" cy="4" r="0.94" fill="<hex>"/><circle cx="5.17" cy="6.03" r="0.94" fill="<hex>"/><circle cx="2.83" cy="6.03" r="0.94" fill="<hex>"/><circle cx="1.66" cy="4" r="0.94" fill="<hex>"/><circle cx="2.83" cy="1.97" r="0.94" fill="<hex>"/><circle cx="5.17" cy="1.97" r="0.94" fill="<hex>"/></svg>
 
 ### 6.5 SHAPES (shapes) — 4 files: triangle, square, pentagon, hexagon
-Centered (256,256), radius-180 bounding circle.
-  - triangle: 3 vertices, first -90 (up), then +120, +240.
-  - square: rect x=76 y=76 width=360 height=360.
-  - pentagon: 5 vertices, first -90, step 72.
-  - hexagon: 6 vertices, first -90, step 60.
-Polygons use <polygon points="..."> rounded to whole numbers.
-    <svg viewBox="0 0 512 512"><rect width="512" height="512" fill="#FFFFFF"/><rect x="76" y="76" width="360" height="360" fill="<hex>"/></svg>
+Centred (4,4) on a radius-2.8 bounding circle, so all four read at comparable
+size. Vertices rounded to 2 decimals.
+  - triangle: <polygon points="4,1.2 6.42,5.4 1.58,5.4" fill="<hex>"/>
+  - square:   <rect x="1.2" y="1.2" width="5.6" height="5.6" fill="<hex>"/>
+  - pentagon: <polygon points="4,1.2 6.66,3.13 5.65,6.27 2.35,6.27 1.34,3.13" fill="<hex>"/>
+  - hexagon:  <polygon points="4,1.2 6.42,2.6 6.42,5.4 4,6.8 1.58,5.4 1.58,2.6" fill="<hex>"/>
+White background rect first, then the shape.
+    <svg viewBox="0 0 8 8"><rect width="8" height="8" fill="#FFFFFF"/><rect x="1.2" y="1.2" width="5.6" height="5.6" fill="<hex>"/></svg>
 
 ## 7. FILE COUNT
 1 + 26 + 26 + 1 + 1 + 4 = 59. Program prints the count and errors if not 59.
@@ -122,14 +129,14 @@ invoke tilegen and the per-colour and total file counts.
     <metadata, <title, <desc, url(, data:, <!--, <?xml, <!DOCTYPE
     Every one must return ZERO matches across all 59 files.
   - Confirm character A and lowercase a match section 12 cell for cell.
-  - Confirm every root is exactly <svg viewBox="0 0 512 512">.
+  - Confirm every root is exactly <svg viewBox="0 0 8 8">.
 
 ## 10. REPORT — end with exactly this
     PROGRAM: tilegen.c , <lines> lines
     FILE COUNT PER COLOUR: <n>  (must be 59)
     TOTAL FILES: <n>            (must be 472)
     FORBIDDEN-TOKEN SCAN: matches found = <n>  (must be 0)
-    ROOT IS EXACTLY <svg viewBox="0 0 512 512">: yes/no
+    ROOT IS EXACTLY <svg viewBox="0 0 8 8">: yes/no
     BITMAP MATCH A and a vs section 12: yes/no
     FILES: <name> <bytes>, one line each
     BUNDLE: <zip path> <bytes>
