@@ -16,6 +16,10 @@
 #define GLYPH_COLS 8
 #define MAX_PATH_LEN 512
 #define PI 3.14159265358979323846
+#define SOLID_TILE_COUNT 1
+#define BALL_TILE_COUNT 1
+#define BALLS_TILE_COUNT 1
+#define SHAPE_TILE_COUNT 4
 
 typedef struct {
     const char *name;
@@ -85,7 +89,7 @@ static int created_files = 0;
 static int expected_file_count(void) {
     int uppercase_count = (int)(sizeof(UPPERCASE_GLYPHS) / sizeof(UPPERCASE_GLYPHS[0]));
     int lowercase_count = (int)(sizeof(LOWERCASE_GLYPHS) / sizeof(LOWERCASE_GLYPHS[0]));
-    return 1 + uppercase_count + lowercase_count + 1 + 1 + 4;
+    return SOLID_TILE_COUNT + uppercase_count + lowercase_count + BALL_TILE_COUNT + BALLS_TILE_COUNT + SHAPE_TILE_COUNT;
 }
 
 static bool ensure_dir(const char *path) {
@@ -97,6 +101,15 @@ static bool ensure_dir(const char *path) {
     }
     perror(path);
     return false;
+}
+
+static bool build_path(char *dest, size_t dest_size, const char *format, const char *base, const char *suffix) {
+    int written = snprintf(dest, dest_size, format, base, suffix);
+    if (written < 0 || (size_t)written >= dest_size) {
+        fprintf(stderr, "ERROR: path too long for buffer\n");
+        return false;
+    }
+    return true;
 }
 
 static FILE *open_svg(const char *path) {
@@ -231,51 +244,69 @@ int main(void) {
         return 1;
     }
 
-    snprintf(path, sizeof(path), "%s/03_colors_orange_solid_screen.svg", base);
+    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_solid_screen.svg")) {
+        return 1;
+    }
     if (!write_solid_screen(path)) {
         return 1;
     }
 
     for (size_t i = 0; i < sizeof(UPPERCASE_GLYPHS) / sizeof(UPPERCASE_GLYPHS[0]); ++i) {
-        snprintf(path, sizeof(path), "%s/03_colors_orange_ABC_%s.svg", base, UPPERCASE_GLYPHS[i].name);
+        if (!build_path(path, sizeof(path), "%s/03_colors_orange_ABC_%s.svg", base, UPPERCASE_GLYPHS[i].name)) {
+            return 1;
+        }
         if (!write_letter(path, &UPPERCASE_GLYPHS[i])) {
             return 1;
         }
     }
 
     for (size_t i = 0; i < sizeof(LOWERCASE_GLYPHS) / sizeof(LOWERCASE_GLYPHS[0]); ++i) {
-        snprintf(path, sizeof(path), "%s/03_colors_orange_abc_%s.svg", base, LOWERCASE_GLYPHS[i].name);
+        if (!build_path(path, sizeof(path), "%s/03_colors_orange_abc_%s.svg", base, LOWERCASE_GLYPHS[i].name)) {
+            return 1;
+        }
         if (!write_letter(path, &LOWERCASE_GLYPHS[i])) {
             return 1;
         }
     }
 
-    snprintf(path, sizeof(path), "%s/03_colors_orange_ball_one.svg", base);
+    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_ball_one.svg")) {
+        return 1;
+    }
     if (!write_one_ball(path)) {
         return 1;
     }
 
-    snprintf(path, sizeof(path), "%s/03_colors_orange_balls_seven.svg", base);
+    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_balls_seven.svg")) {
+        return 1;
+    }
     if (!write_seven_balls(path)) {
         return 1;
     }
 
-    snprintf(path, sizeof(path), "%s/03_colors_orange_shapes_triangle.svg", base);
+    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_shapes_triangle.svg")) {
+        return 1;
+    }
     if (!write_polygon_shape(path, 3, -90)) {
         return 1;
     }
 
-    snprintf(path, sizeof(path), "%s/03_colors_orange_shapes_square.svg", base);
+    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_shapes_square.svg")) {
+        return 1;
+    }
     if (!write_square_shape(path)) {
         return 1;
     }
 
-    snprintf(path, sizeof(path), "%s/03_colors_orange_shapes_pentagon.svg", base);
+    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_shapes_pentagon.svg")) {
+        return 1;
+    }
     if (!write_polygon_shape(path, 5, -90)) {
         return 1;
     }
 
-    snprintf(path, sizeof(path), "%s/03_colors_orange_shapes_hexagon.svg", base);
+    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_shapes_hexagon.svg")) {
+        return 1;
+    }
     if (!write_polygon_shape(path, 6, -90)) {
         return 1;
     }
