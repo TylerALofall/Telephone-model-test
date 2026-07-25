@@ -27,6 +27,8 @@
 #define N_COLOUR_WORDS 8
 #define CANVAS_UNITS 8
 #define MAX_PATH_LEN 512
+#define BALL_RADIUS 2.8
+#define SEVEN_BALL_RADIUS 0.94
 
 /* ───── valid colour words ───── */
 static const char *COLOUR_WORDS[N_COLOUR_WORDS] = {
@@ -107,7 +109,8 @@ static const char *LOWER_NAMES[26] = {
 static void make_dir(const char *path)
 {
     if (mkdir(path, 0755) == -1 && errno != EEXIST) {
-        fprintf(stderr, "Cannot create directory '%s': %s\n", path, strerror(errno));
+        int err = errno;
+        fprintf(stderr, "Cannot create directory '%s': %s\n", path, strerror(err));
         exit(EXIT_FAILURE);
     }
 }
@@ -230,7 +233,7 @@ static int write_ball(const char *dir, const char *colour, const char *hex)
     FILE *f = open_tile(dir, colour, "ball", "one");
     write_svg_open(f);
     write_white_bg(f);
-    fprintf(f, "<circle cx=\"4\" cy=\"4\" r=\"2.8\" fill=\"%s\"/>\n", hex);
+    fprintf(f, "<circle cx=\"4\" cy=\"4\" r=\"%.1f\" fill=\"%s\"/>\n", BALL_RADIUS, hex);
     write_svg_close(f);
     fclose(f);
     return 1;
@@ -238,6 +241,7 @@ static int write_ball(const char *dir, const char *colour, const char *hex)
 
 static int write_balls(const char *dir, const char *colour, const char *hex)
 {
+    /* Centre + six around a radius-2.34 ring, rounded to 2 decimals per spec. */
     static const char *centers[7][2] = {
         {"4",    "4"},
         {"6.34", "4"},
@@ -252,8 +256,8 @@ static int write_balls(const char *dir, const char *colour, const char *hex)
     write_svg_open(f);
     write_white_bg(f);
     for (int i = 0; i < 7; i++) {
-        fprintf(f, "<circle cx=\"%s\" cy=\"%s\" r=\"0.94\" fill=\"%s\"/>\n",
-                centers[i][0], centers[i][1], hex);
+        fprintf(f, "<circle cx=\"%s\" cy=\"%s\" r=\"%.2f\" fill=\"%s\"/>\n",
+                centers[i][0], centers[i][1], SEVEN_BALL_RADIUS, hex);
     }
     write_svg_close(f);
     fclose(f);
