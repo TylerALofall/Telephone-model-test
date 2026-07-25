@@ -255,8 +255,6 @@ static int write_balls(const char *dir, const char *colour, const char *hex)
 static int write_shapes(const char *dir, const char *colour, const char *hex)
 {
     int count = 0;
-    int i;
-    double a;
 
     /* triangle — 3 vertices on r=180, start=-90°, step=120° */
     {
@@ -264,8 +262,8 @@ static int write_shapes(const char *dir, const char *colour, const char *hex)
         write_svg_open(f);
         write_white_bg(f);
         int px[3], py[3];
-        for (i = 0; i < 3; i++) {
-            a = (-90.0 + i * 120.0) * M_PI / 180.0;
+        for (int i = 0; i < 3; i++) {
+            double a = (-90.0 + i * 120.0) * M_PI / 180.0;
             px[i] = iround(256.0 + 180.0 * cos(a));
             py[i] = iround(256.0 + 180.0 * sin(a));
         }
@@ -294,8 +292,8 @@ static int write_shapes(const char *dir, const char *colour, const char *hex)
         write_svg_open(f);
         write_white_bg(f);
         int px[5], py[5];
-        for (i = 0; i < 5; i++) {
-            a = (-90.0 + i * 72.0) * M_PI / 180.0;
+        for (int i = 0; i < 5; i++) {
+            double a = (-90.0 + i * 72.0) * M_PI / 180.0;
             px[i] = iround(256.0 + 180.0 * cos(a));
             py[i] = iround(256.0 + 180.0 * sin(a));
         }
@@ -314,8 +312,8 @@ static int write_shapes(const char *dir, const char *colour, const char *hex)
         write_svg_open(f);
         write_white_bg(f);
         int px[6], py[6];
-        for (i = 0; i < 6; i++) {
-            a = (-90.0 + i * 60.0) * M_PI / 180.0;
+        for (int i = 0; i < 6; i++) {
+            double a = (-90.0 + i * 60.0) * M_PI / 180.0;
             px[i] = iround(256.0 + 180.0 * cos(a));
             py[i] = iround(256.0 + 180.0 * sin(a));
         }
