@@ -103,8 +103,8 @@ static bool ensure_dir(const char *path) {
     return false;
 }
 
-static bool build_path(char *dest, size_t dest_size, const char *format, const char *base, const char *suffix) {
-    int written = snprintf(dest, dest_size, format, base, suffix);
+static bool build_path(char *dest, size_t dest_size, const char *format, const char *output_dir, const char *filename) {
+    int written = snprintf(dest, dest_size, format, output_dir, filename);
     if (written < 0 || (size_t)written >= dest_size) {
         fprintf(stderr, "ERROR: path too long for buffer\n");
         return false;
@@ -237,14 +237,14 @@ static bool write_square_shape(const char *path) {
 }
 
 int main(void) {
-    const char *base = "out/03_colors/orange";
+    const char *output_dir = "out/03_colors/orange";
     char path[MAX_PATH_LEN];
 
-    if (!ensure_dir("out") || !ensure_dir("out/03_colors") || !ensure_dir(base)) {
+    if (!ensure_dir("out") || !ensure_dir("out/03_colors") || !ensure_dir(output_dir)) {
         return 1;
     }
 
-    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_solid_screen.svg")) {
+    if (!build_path(path, sizeof(path), "%s/%s", output_dir, "03_colors_orange_solid_screen.svg")) {
         return 1;
     }
     if (!write_solid_screen(path)) {
@@ -252,7 +252,7 @@ int main(void) {
     }
 
     for (size_t i = 0; i < sizeof(UPPERCASE_GLYPHS) / sizeof(UPPERCASE_GLYPHS[0]); ++i) {
-        if (!build_path(path, sizeof(path), "%s/03_colors_orange_ABC_%s.svg", base, UPPERCASE_GLYPHS[i].name)) {
+        if (!build_path(path, sizeof(path), "%s/03_colors_orange_ABC_%s.svg", output_dir, UPPERCASE_GLYPHS[i].name)) {
             return 1;
         }
         if (!write_letter(path, &UPPERCASE_GLYPHS[i])) {
@@ -261,7 +261,7 @@ int main(void) {
     }
 
     for (size_t i = 0; i < sizeof(LOWERCASE_GLYPHS) / sizeof(LOWERCASE_GLYPHS[0]); ++i) {
-        if (!build_path(path, sizeof(path), "%s/03_colors_orange_abc_%s.svg", base, LOWERCASE_GLYPHS[i].name)) {
+        if (!build_path(path, sizeof(path), "%s/03_colors_orange_abc_%s.svg", output_dir, LOWERCASE_GLYPHS[i].name)) {
             return 1;
         }
         if (!write_letter(path, &LOWERCASE_GLYPHS[i])) {
@@ -269,42 +269,42 @@ int main(void) {
         }
     }
 
-    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_ball_one.svg")) {
+    if (!build_path(path, sizeof(path), "%s/%s", output_dir, "03_colors_orange_ball_one.svg")) {
         return 1;
     }
     if (!write_one_ball(path)) {
         return 1;
     }
 
-    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_balls_seven.svg")) {
+    if (!build_path(path, sizeof(path), "%s/%s", output_dir, "03_colors_orange_balls_seven.svg")) {
         return 1;
     }
     if (!write_seven_balls(path)) {
         return 1;
     }
 
-    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_shapes_triangle.svg")) {
+    if (!build_path(path, sizeof(path), "%s/%s", output_dir, "03_colors_orange_shapes_triangle.svg")) {
         return 1;
     }
     if (!write_polygon_shape(path, 3, -90)) {
         return 1;
     }
 
-    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_shapes_square.svg")) {
+    if (!build_path(path, sizeof(path), "%s/%s", output_dir, "03_colors_orange_shapes_square.svg")) {
         return 1;
     }
     if (!write_square_shape(path)) {
         return 1;
     }
 
-    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_shapes_pentagon.svg")) {
+    if (!build_path(path, sizeof(path), "%s/%s", output_dir, "03_colors_orange_shapes_pentagon.svg")) {
         return 1;
     }
     if (!write_polygon_shape(path, 5, -90)) {
         return 1;
     }
 
-    if (!build_path(path, sizeof(path), "%s/%s", base, "03_colors_orange_shapes_hexagon.svg")) {
+    if (!build_path(path, sizeof(path), "%s/%s", output_dir, "03_colors_orange_shapes_hexagon.svg")) {
         return 1;
     }
     if (!write_polygon_shape(path, 6, -90)) {
