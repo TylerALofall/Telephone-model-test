@@ -81,7 +81,7 @@ static const Glyph LOWERCASE_GLYPHS[] = {
 static int created_files = 0;
 
 static bool ensure_dir(const char *path) {
-    if (mkdir(path, 0777) == 0) {
+    if (mkdir(path, 0755) == 0) {
         return true;
     }
     if (errno == EEXIST) {
@@ -217,7 +217,7 @@ static bool write_square_shape(const char *path) {
 
 int main(void) {
     const char *base = "out/03_colors/orange";
-    char path[256];
+    char path[512];
 
     if (!ensure_dir("out") || !ensure_dir("out/03_colors") || !ensure_dir(base)) {
         return 1;
