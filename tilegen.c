@@ -7,7 +7,7 @@
  * Writes 59 SVG files under out/03_colors/<colour>/
  * Named: 03_colors_<colour>_<group>_<item>.svg
  *
- * Build:  cc -std=c99 -O2 -Wall tilegen.c -lm -o tilegen
+ * Build:  cc -std=c99 -O2 -Wall tilegen.c -o tilegen
  *
  * SVG format: geometry only.
  * Root element is exactly: <svg viewBox="0 0 8 8">
@@ -26,6 +26,7 @@
 
 #define N_COLOUR_WORDS 8
 #define CANVAS_UNITS 8
+#define MAX_PATH_LEN 512
 
 /* ───── valid colour words ───── */
 static const char *COLOUR_WORDS[N_COLOUR_WORDS] = {
@@ -137,7 +138,7 @@ static int is_valid_hex(const char *hex)
 static FILE *open_tile(const char *dir, const char *colour,
                        const char *group, const char *item)
 {
-    char path[512];
+    char path[MAX_PATH_LEN];
     int n = snprintf(path, sizeof(path), "%s/03_colors_%s_%s_%s.svg",
                      dir, colour, group, item);
     if (n < 0 || (size_t)n >= sizeof(path)) {
@@ -332,7 +333,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    char outdir[512];
+    char outdir[MAX_PATH_LEN];
     int n = snprintf(outdir, sizeof(outdir), "out/03_colors/%s", word);
     if (n < 0 || (size_t)n >= sizeof(outdir)) {
         fprintf(stderr, "Output path too long for colour '%s'\n", word);

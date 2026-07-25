@@ -3,7 +3,7 @@
 ## Build
 
 ```sh
-cc -std=c99 -O2 -Wall tilegen.c -lm -o tilegen
+cc -std=c99 -O2 -Wall tilegen.c -o tilegen
 ```
 
 ## Usage
